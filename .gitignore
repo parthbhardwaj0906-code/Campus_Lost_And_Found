@@ -1,0 +1,29 @@
+# =================( Dependencies )=================
+node_modules/
+**/node_modules/
+
+# =================( Environment Files )=================
+# Ignore all local environment files...
+.env
+**/ .env
+# ...but explicitly keep template files tracked
+!*.env.example
+!**/.env.example
+
+# =================( Build Outputs & Runtime )=================
+dist/
+**/dist/
+build/
+**/build/
+backend/uploads/*
+!backend/uploads/.gitkeep
+
+# =================( Logs & OS / IDE )=================
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

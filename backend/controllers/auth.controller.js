@@ -27,11 +27,18 @@ export const registerUser = async (req, res) => {
       user: publicUser(user),
       token
     });
-  } catch (error) {
+    } catch (error) {
+    console.error("REGISTER ERROR:", error);
+
     if (error.code === 11000) {
-      return res.status(409).json({ message: "Email already registered" });
+      return res.status(409).json({
+        message: "Email already registered"
+      });
     }
-    return res.status(500).json({ message: "Could not register user" });
+
+    return res.status(500).json({
+      message: error.message || "Could not register user"
+    });
   }
 };
 
