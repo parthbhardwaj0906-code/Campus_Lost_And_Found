@@ -1,31 +1,53 @@
 // API service for Campus Lost & Found (Pure Vanilla JS)
 
-const getBaseUrl = () => {
+export function getBaseUrl() {
   if (typeof window !== "undefined" && window.API_BASE_URL) {
     return window.API_BASE_URL;
-  }
-  try {
-    if (typeof import.meta !== "undefined" && import.meta.env && import.meta.env.VITE_API_URL) {
-      return import.meta.env.VITE_API_URL;
-    }
-  } catch (e) {
-    // import.meta not available
   }
   if (typeof localStorage !== "undefined" && localStorage.getItem("clf_api_url")) {
     return localStorage.getItem("clf_api_url");
   }
-  return "http://localhost:8000/api";
-};
+
+  const isLocalhost =
+    typeof window !== "undefined" &&
+    Boolean(
+      window.location.hostname === "localhost" ||
+      window.location.hostname === "127.0.0.1" ||
+      window.location.hostname.endsWith(".local")
+    );
+
+  if (isLocalhost) {
+    return "http://localhost:8000/api";
+  }
+
+  try {
+    if (typeof import.meta !== "undefined" && import.meta.env && import.meta.env.VITE_API_URL) {
+      const viteUrl = import.meta.env.VITE_API_URL;
+      if (viteUrl && !viteUrl.includes("localhost") && !viteUrl.includes("127.0.0.1")) {
+        return viteUrl;
+      }
+    }
+  } catch (e) {
+    // import.meta not available
+  }
+
+  return "https://deck-critical-hamster.abasthan.app/api";
+}
+
+export function getApiOrigin() {
+  return getBaseUrl().replace(/\/api\/?$/, "");
+}
 
 export const API_BASE = getBaseUrl();
-export const API_ORIGIN = API_BASE.replace(/\/api\/?$/, "");
+export const API_ORIGIN = getApiOrigin();
 
 export function getImageUrl(imagePath) {
   if (!imagePath) return "";
   if (/^https?:\/\//i.test(imagePath)) {
     return imagePath;
   }
-  return `${API_ORIGIN}${imagePath.startsWith("/") ? "" : "/"}${imagePath}`;
+  const origin = getApiOrigin();
+  return `${origin}${imagePath.startsWith("/") ? "" : "/"}${imagePath}`;
 }
 
 export function escapeHtml(str) {
@@ -39,9 +61,10 @@ export function escapeHtml(str) {
 }
 
 async function request(endpoint, options = {}) {
+  const baseUrl = getBaseUrl();
   const url = endpoint.startsWith("http")
     ? endpoint
-    : `${API_BASE}${endpoint.startsWith("/") ? "" : "/"}${endpoint}`;
+    : `${baseUrl}${endpoint.startsWith("/") ? "" : "/"}${endpoint}`;
 
   const headers = { ...(options.headers || {}) };
   const token = localStorage.getItem("clf_token");
