@@ -36,7 +36,8 @@
         <p>Add item details and a photo to help its owner find it.</p>
       </div>
 
-      <form class="form-card wide-form" action="my-posts.html" method="get">
+      <form class="form-card wide-form" id="create-item-form">
+        <div class="alert alert-error hidden" id="error-alert"></div>
         <!-- Pure CSS Type Toggle via Radio Inputs -->
         <div class="type-toggle">
           <label class="type-option">
@@ -122,7 +123,7 @@
           <a class="btn btn-ghost" href="dashboard.html">
             Cancel
           </a>
-          <button class="btn btn-primary" type="submit">
+          <button class="btn btn-primary" id="publish-btn" type="submit">
             Publish post →
           </button>
         </div>
@@ -143,5 +144,7 @@
       <span>© 2026 CampusFind</span>
     </div>
   </footer>
+
+  <script type="module" src="js/create-item.js"></script>
 </body>
 </html>

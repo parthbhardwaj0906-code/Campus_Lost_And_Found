@@ -39,17 +39,17 @@
         <a class="btn btn-primary" href="create-item.html">＋ Report an item</a>
       </div>
 
-      <form class="filter-bar" action="dashboard.html" method="get">
+      <form class="filter-bar" id="filter-form" action="dashboard.html" method="get">
         <div class="search-field">
           <span>⌕</span>
-          <input name="search" placeholder="Search by item, description or location..." />
+          <input name="search" id="search-input" placeholder="Search by item, description or location..." />
         </div>
-        <select name="type">
+        <select name="type" id="type-select">
           <option value="">All posts</option>
           <option value="lost">Lost items</option>
           <option value="found">Found items</option>
         </select>
-        <select name="category">
+        <select name="category" id="category-select">
           <option value="">All categories</option>
           <option value="Electronics">Electronics</option>
           <option value="Accessories">Accessories</option>
@@ -60,15 +60,18 @@
           <option value="Other">Other</option>
         </select>
         <button class="btn btn-primary" type="submit">Search</button>
-        <a class="btn btn-ghost" href="dashboard.html">Clear</a>
+        <a class="btn btn-ghost" id="clear-btn" href="dashboard.html">Clear</a>
       </form>
 
       <div class="results-heading">
         <h2>Community posts</h2>
-        <span class="muted small">6 results on this page</span>
+        <span class="muted small" id="results-count">Community posts</span>
       </div>
 
-      <div class="items-grid">
+      <div class="alert alert-error hidden" id="error-alert"></div>
+
+      <div id="items-container">
+        <div class="items-grid">
         <!-- Item 1 -->
         <article class="item-card">
           <div class="item-visual">
@@ -177,6 +180,7 @@
           </div>
         </article>
       </div>
+        </div>
     </div>
   </main>
 
@@ -189,5 +193,7 @@
       <span>© 2026 CampusFind</span>
     </div>
   </footer>
+
+  <script type="module" src="js/dashboard.js"></script>
 </body>
 </html>

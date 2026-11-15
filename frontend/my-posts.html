@@ -22,7 +22,7 @@
         <a class="active" href="my-posts.html">My posts</a>
       </div>
       <div class="nav-actions">
-        <span class="nav-user">Hi, Alex</span>
+        <span class="nav-user">My Account</span>
         <a class="btn btn-outline btn-small" href="login.html">Logout</a>
       </div>
     </nav>
@@ -39,52 +39,11 @@
         <a class="btn btn-primary" href="create-item.html">＋ New post</a>
       </div>
 
-      <div class="alert alert-success">
-        Your item has been posted successfully and is now visible to the campus.
-      </div>
+      <div class="alert alert-success hidden" id="notice-alert"></div>
+      <div class="alert alert-error hidden" id="error-alert"></div>
 
-      <div class="items-grid">
-        <!-- User Post 1 -->
-        <div class="managed-card">
-          <article class="item-card">
-            <div class="item-visual">
-              <div class="item-placeholder"><span>⌕</span><small>No image provided</small></div>
-              <span class="pill pill-lost">Lost item</span>
-            </div>
-            <div class="item-card-body">
-              <div class="item-meta">Accessories <span>·</span> open</div>
-              <h3>Hydro Flask Water Bottle</h3>
-              <p class="item-description">Pacific blue 32oz bottle with computer science stickers on the side.</p>
-              <div class="item-location">⌖ Engineering Block B</div>
-              <div class="item-card-bottom">
-                <span class="muted small">Yesterday</span>
-                <a class="text-link" href="item-details.html">View details <span>→</span></a>
-              </div>
-            </div>
-          </article>
-          <a class="delete-link" href="my-posts.html">Delete post</a>
-        </div>
-
-        <!-- User Post 2 -->
-        <div class="managed-card">
-          <article class="item-card">
-            <div class="item-visual">
-              <div class="item-placeholder"><span>✓</span><small>No image provided</small></div>
-              <span class="pill pill-found">Found item</span>
-            </div>
-            <div class="item-card-body">
-              <div class="item-meta">Electronics <span>·</span> open</div>
-              <h3>Sony WH-1000XM4 Headphones</h3>
-              <p class="item-description">Black over-ear headphones found on the 3rd floor study quiet area near desk 14.</p>
-              <div class="item-location">⌖ Central Library, 3rd Floor</div>
-              <div class="item-card-bottom">
-                <span class="muted small">Today</span>
-                <a class="text-link" href="item-details.html">View details <span>→</span></a>
-              </div>
-            </div>
-          </article>
-          <a class="delete-link" href="my-posts.html">Delete post</a>
-        </div>
+      <div id="items-container">
+        <div class="page-loader">Loading your posts...</div>
       </div>
     </div>
   </main>
@@ -98,5 +57,7 @@
       <span>© 2026 CampusFind</span>
     </div>
   </footer>
+
+  <script type="module" src="js/my-posts.js"></script>
 </body>
 </html>

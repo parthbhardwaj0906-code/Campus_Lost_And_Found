@@ -55,8 +55,9 @@
           </div>
 
           <!-- 1. LOGIN FORM PANEL -->
-          <form class="login-panel" action="dashboard.html" method="get">
+          <form class="login-panel" id="login-form">
             <h2>Log in to your account</h2>
+            <div class="alert alert-error hidden" id="login-error-alert"></div>
 
             <label>
               College email address
@@ -76,7 +77,7 @@
               <a class="text-link" href="#forgot" style="font-size: 11px;">Forgot password?</a>
             </div>
 
-            <button class="btn btn-primary btn-full" type="submit">
+            <button class="btn btn-primary btn-full" id="login-submit-btn" type="submit">
               Log in to Campus <span>→</span>
             </button>
 
@@ -89,8 +90,9 @@
           </form>
 
           <!-- 2. REGISTER FORM PANEL -->
-          <form class="register-panel" action="dashboard.html" method="get">
+          <form class="register-panel" id="register-form">
             <h2>Create your student account</h2>
+            <div class="alert alert-error hidden" id="register-error-alert"></div>
 
             <label>
               Full name
@@ -107,7 +109,7 @@
               <input type="password" name="password" placeholder="At least 8 characters" minlength="8" required />
             </label>
 
-            <button class="btn btn-primary btn-full" type="submit">
+            <button class="btn btn-primary btn-full" id="register-submit-btn" type="submit">
               Create account <span>→</span>
             </button>
 
@@ -165,5 +167,7 @@
       <span>© 2026 CampusFind</span>
     </div>
   </footer>
+
+  <script type="module" src="js/login.js"></script>
 </body>
 </html>
