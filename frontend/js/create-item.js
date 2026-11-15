@@ -1,4 +1,4 @@
-import api from "./api.js";
+import api, { escapeHtml } from "./api.js";
 import auth from "./auth.js";
 import renderNav from "./navbar.js";
 
@@ -32,7 +32,56 @@ document.addEventListener("DOMContentLoaded", () => {
     lostRadio.checked = true;
   }
 
-  const handleFile = (file) => {
+  const compressImage = async (file) => {
+    // If image is already reasonably small, no compression needed
+    if (file.size <= 1.5 * 1024 * 1024) return file;
+
+    return new Promise((resolve) => {
+      const img = new Image();
+      img.onload = () => {
+        URL.revokeObjectURL(img.src);
+        const canvas = document.createElement("canvas");
+        let width = img.width;
+        let height = img.height;
+        const maxDim = 1920;
+
+        if (width > maxDim || height > maxDim) {
+          if (width > height) {
+            height = Math.round((height * maxDim) / width);
+            width = maxDim;
+          } else {
+            width = Math.round((width * maxDim) / height);
+            height = maxDim;
+          }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0, width, height);
+
+        canvas.toBlob(
+          (blob) => {
+            if (blob && blob.size < file.size) {
+              const compressedFile = new File([blob], file.name.replace(/\.[^.]+$/, ".jpg"), {
+                type: "image/jpeg",
+                lastModified: Date.now()
+              });
+              resolve(compressedFile);
+            } else {
+              resolve(file);
+            }
+          },
+          "image/jpeg",
+          0.85
+        );
+      };
+      img.onerror = () => resolve(file);
+      img.src = URL.createObjectURL(file);
+    });
+  };
+
+  const handleFile = async (file) => {
     if (!file) return;
 
     if (!file.type.startsWith("image/")) {
@@ -43,9 +92,9 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    if (file.size > 5 * 1024 * 1024) {
+    if (file.size > 25 * 1024 * 1024) {
       if (errorAlert) {
-        errorAlert.textContent = "Image size must be less than 5 MB.";
+        errorAlert.textContent = "Image size must be less than 25 MB.";
         errorAlert.classList.remove("hidden");
       }
       return;
@@ -56,12 +105,25 @@ document.addEventListener("DOMContentLoaded", () => {
       errorAlert.textContent = "";
     }
 
-    imageFile = file;
     if (previewBox) {
       previewBox.innerHTML = `
+        <span style="font-size: 20px;">⏳</span>
+        <span class="muted small">Optimizing photo for upload...</span>
+      `;
+    }
+
+    try {
+      imageFile = await compressImage(file);
+    } catch {
+      imageFile = file;
+    }
+
+    if (previewBox) {
+      const sizeMb = (imageFile.size / (1024 * 1024)).toFixed(2);
+      previewBox.innerHTML = `
         <span style="font-size: 24px;">✓</span>
-        <strong style="color: var(--green); font-size: 11px;">${file.name}</strong>
-        <small style="color: var(--muted); font-size: 10px;">(${(file.size / (1024 * 1024)).toFixed(2)} MB)</small>
+        <strong style="color: var(--green); font-size: 11px;">${escapeHtml(file.name)}</strong>
+        <small style="color: var(--muted); font-size: 10px;">(${sizeMb} MB ready to publish)</small>
       `;
     }
   };
