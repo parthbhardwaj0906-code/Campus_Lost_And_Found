@@ -8,9 +8,10 @@ export function renderItemCard(item) {
   const dateFormatted = item.date ? new Date(item.date).toLocaleDateString() : "";
   const imageUrl = item.imageUrl ? getImageUrl(item.imageUrl) : "";
 
+  const placeholderHtml = `<div class="item-placeholder"><span>${isLost ? "⌕" : "✓"}</span><small>No image provided</small></div>`;
   const visualContent = imageUrl
-    ? `<img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(item.title || '')}" />`
-    : `<div class="item-placeholder"><span>${isLost ? "⌕" : "✓"}</span><small>No image provided</small></div>`;
+    ? `<img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(item.title || '')}" onerror="this.style.display='none'; if(this.nextElementSibling) this.nextElementSibling.style.display='flex';" />${placeholderHtml.replace('class="item-placeholder"', 'class="item-placeholder" style="display:none"')}`
+    : placeholderHtml;
 
   return `
     <article class="item-card" data-item-id="${escapeHtml(item._id || '')}">

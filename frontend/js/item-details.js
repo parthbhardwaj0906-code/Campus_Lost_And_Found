@@ -54,9 +54,10 @@ document.addEventListener("DOMContentLoaded", () => {
       const dateFormatted = item.date ? new Date(item.date).toLocaleDateString() : "";
       const imageUrl = item.imageUrl ? getImageUrl(item.imageUrl) : "";
 
+      const placeholderHtml = `<div class="item-placeholder large"><span>${isLost ? "⌕" : "✓"}</span><small>No image provided</small></div>`;
       const visualHtml = imageUrl
-        ? `<img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(item.title || '')}" />`
-        : `<div class="item-placeholder large"><span>${isLost ? "⌕" : "✓"}</span><small>No image provided</small></div>`;
+        ? `<img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(item.title || '')}" onerror="this.style.display='none'; if(this.nextElementSibling) this.nextElementSibling.style.display='flex';" />${placeholderHtml.replace('class="item-placeholder large"', 'class="item-placeholder large" style="display:none"')}`
+        : placeholderHtml;
 
       if (mainContainer) {
         mainContainer.innerHTML = `
