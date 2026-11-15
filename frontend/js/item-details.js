@@ -9,7 +9,6 @@ document.addEventListener("DOMContentLoaded", () => {
     loadItem();
   }).catch(() => {});
 
-  let user = auth.getUser();
   const params = new URLSearchParams(window.location.search);
   const id = params.get("id");
 
@@ -41,7 +40,7 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
-      user = auth.getUser();
+      const user = auth.getUser();
       const postedById = item.postedBy?._id || item.postedBy?.id || item.postedBy;
       const currentUserId = user?._id || user?.id;
       const isOwner = Boolean(user && postedById && String(postedById) === String(currentUserId));
@@ -89,12 +88,14 @@ document.addEventListener("DOMContentLoaded", () => {
         `;
       }
 
-      // Sidebar logic
+      // Sidebar logic: Fetch claims for this item
       let claims = [];
-      if (canManage && item.itemType === "found") {
+      let ownerContact = null;
+      if (user) {
         try {
           const claimsRes = await api.get(`/claims/item/${id}`);
           claims = claimsRes.claims || [];
+          ownerContact = claimsRes.ownerContact || null;
         } catch {
           claims = [];
         }
@@ -105,59 +106,174 @@ document.addEventListener("DOMContentLoaded", () => {
         <div class="alert alert-success hidden" id="sidebar-success"></div>
       `;
 
-      if (item.itemType === "found" && item.status === "open" && user && !canManage) {
-        sidebarHtml += `
-          <form class="form-card side-card" id="claim-form">
-            <span class="eyebrow">THINK IT'S YOURS?</span>
-            <h2>Make a claim</h2>
-            <p class="muted small">Share details that help verify you are the rightful owner.</p>
-            <label>
-              Your message
-              <textarea rows="5" id="claim-message" placeholder="Describe unique identifying marks or details..." required></textarea>
-            </label>
-            <button class="btn btn-primary btn-full" id="claim-submit-btn" type="submit">Submit claim</button>
-          </form>
-        `;
-      } else if (!user && item.itemType === "found") {
-        const returnUrl = `item-details.html?id=${encodeURIComponent(id)}`;
-        sidebarHtml += `
-          <div class="form-card side-card">
-            <h2>Is this yours?</h2>
-            <p class="muted">Log in to submit a verified claim request.</p>
-            <a class="btn btn-primary btn-full" href="login.html?redirect=${encodeURIComponent(returnUrl)}">Log in to claim</a>
-          </div>
-        `;
-      } else if (item.itemType === "lost") {
-        sidebarHtml += `
-          <div class="form-card side-card">
-            <h2>Have you seen this?</h2>
-            <p class="muted">If you found this item, post a found-item report so the owner can connect with you.</p>
-            <a class="btn btn-primary btn-full" href="create-item.html?type=found">Report a found item</a>
-          </div>
-        `;
-      }
+      const returnUrl = `item-details.html?id=${encodeURIComponent(id)}`;
 
-      if (canManage && item.itemType === "found") {
+      if (canManage) {
+        // OWNER / ADMIN VIEW: See responses and manage them
+        const heading = isLost ? "Found item reports" : "Claim requests";
+        const subtitle = isLost
+          ? "Responses from people who found or saw your missing item."
+          : "Claims submitted by campus members for this found item.";
+
+        const approvedClaim = claims.find(c => c.status === "approved");
+
+        if (approvedClaim) {
+          const finderEmail = approvedClaim.claimedBy?.email;
+          const finderName = approvedClaim.claimedBy?.name || "Campus member";
+          sidebarHtml += `
+            <div class="form-card side-card">
+              <div class="exchange-card">
+                <h3>✓ Report approved!</h3>
+                <p>You connected with <strong>${escapeHtml(finderName)}</strong>. You can contact them to coordinate handover:</p>
+                ${finderEmail ? `
+                  <a class="exchange-email" href="mailto:${escapeHtml(finderEmail)}">
+                    ✉ ${escapeHtml(finderEmail)}
+                  </a>
+                ` : ''}
+              </div>
+
+              <div class="resolve-prompt">
+                <h4>Item resolved!</h4>
+                <p>Now that your missing item has been located and confirmed, would you like to delete this missing item request from the campus board?</p>
+                <div class="resolve-actions">
+                  <button class="btn btn-danger btn-small" id="delete-resolved-btn" type="button">Delete missing item request</button>
+                </div>
+              </div>
+            </div>
+          `;
+        }
+
         sidebarHtml += `
           <div class="form-card side-card">
-            <h2>Claim requests</h2>
+            <h2>${heading}</h2>
+            <p class="muted small">${subtitle}</p>
             <div id="claims-list">
               ${claims.length > 0 ? claims.map(c => `
                 <div class="claim-card" data-claim-id="${escapeHtml(c._id)}">
                   <strong>${escapeHtml(c.claimedBy?.name || "Campus member")}</strong>
+                  ${c.status === "approved" && c.claimedBy?.email ? `
+                    <div style="margin: 6px 0;">
+                      <a class="exchange-email" href="mailto:${escapeHtml(c.claimedBy.email)}">✉ ${escapeHtml(c.claimedBy.email)}</a>
+                    </div>
+                  ` : ''}
                   <p>${escapeHtml(c.message || "")}</p>
                   <span class="pill pill-neutral">${escapeHtml(c.status || "pending")}</span>
                   ${c.status === "pending" ? `
                     <div class="claim-actions">
-                      <button class="btn btn-primary btn-small approve-claim-btn" data-id="${c._id}">Approve</button>
+                      <button class="btn btn-primary btn-small approve-claim-btn" data-id="${c._id}">Approve report</button>
                       <button class="btn btn-outline btn-small reject-claim-btn" data-id="${c._id}">Reject</button>
                     </div>
                   ` : ''}
                 </div>
-              `).join("") : '<p class="muted small">No claims submitted yet.</p>'}
+              `).join("") : `<p class="muted small">${isLost ? "No one has reported finding this item yet." : "No claims submitted yet."}</p>`}
             </div>
           </div>
         `;
+      } else if (!user) {
+        // NOT LOGGED IN VIEW
+        if (isLost) {
+          sidebarHtml += `
+            <div class="form-card side-card">
+              <span class="eyebrow">HAVE YOU SEEN THIS?</span>
+              <h2>Found this item?</h2>
+              <p class="muted">Log in to report that you've found this item so the owner can connect with you.</p>
+              <a class="btn btn-primary btn-full" href="login.html?redirect=${encodeURIComponent(returnUrl)}">Log in to report</a>
+            </div>
+          `;
+        } else {
+          sidebarHtml += `
+            <div class="form-card side-card">
+              <span class="eyebrow">THINK IT'S YOURS?</span>
+              <h2>Is this yours?</h2>
+              <p class="muted">Log in to submit a claim request to the finder.</p>
+              <a class="btn btn-primary btn-full" href="login.html?redirect=${encodeURIComponent(returnUrl)}">Log in to claim</a>
+            </div>
+          `;
+        }
+      } else {
+        // LOGGED IN VISITOR (Not owner)
+        const myClaim = claims.find(c => {
+          const cid = c.claimedBy?._id || c.claimedBy?.id || c.claimedBy;
+          return String(cid) === String(currentUserId);
+        });
+
+        if (myClaim) {
+          // Already submitted
+          if (myClaim.status === "approved") {
+            const ownerEmail = ownerContact?.email || item.postedBy?.email;
+            const ownerName = ownerContact?.name || item.postedBy?.name || "The owner";
+            sidebarHtml += `
+              <div class="form-card side-card">
+                <div class="exchange-card">
+                  <h3>✓ Report approved by owner!</h3>
+                  <p><strong>${escapeHtml(ownerName)}</strong> approved your report. You can now coordinate handover directly via email:</p>
+                  ${ownerEmail ? `
+                    <a class="exchange-email" href="mailto:${escapeHtml(ownerEmail)}">
+                      ✉ ${escapeHtml(ownerEmail)}
+                    </a>
+                  ` : ''}
+                </div>
+                <div class="claim-card">
+                  <strong>Your report message:</strong>
+                  <p>${escapeHtml(myClaim.message || "")}</p>
+                  <span class="pill pill-found">Status: Approved</span>
+                </div>
+              </div>
+            `;
+          } else if (myClaim.status === "rejected") {
+            sidebarHtml += `
+              <div class="form-card side-card">
+                <h2>Report not matched</h2>
+                <p class="muted small">The owner reviewed your report and marked it as not matching their item.</p>
+              </div>
+            `;
+          } else {
+            // Pending
+            sidebarHtml += `
+              <div class="form-card side-card">
+                <span class="eyebrow">REPORT SENT</span>
+                <h2>Report submitted</h2>
+                <p class="muted small">Your response has been sent to the person who reported this missing item. As soon as they approve, their email will be shared here.</p>
+                <div class="claim-card">
+                  <strong>Your message:</strong>
+                  <p>${escapeHtml(myClaim.message || "")}</p>
+                  <span class="pill pill-neutral">Status: Pending owner review</span>
+                </div>
+              </div>
+            `;
+          }
+        } else if (item.status === "open") {
+          // Can submit a response/report
+          const title = isLost ? "Report a found item" : "Make a claim";
+          const eyebrow = isLost ? "HAVE YOU SEEN THIS?" : "THINK IT'S YOURS?";
+          const desc = isLost
+            ? "Send a message to the owner describing where you found it, where it is stored, or how they can verify."
+            : "Share details that help verify you are the rightful owner.";
+          const placeholder = isLost
+            ? "e.g. I found your black umbrella on the 2nd floor near the water cooler. It is currently with the library front desk..."
+            : "Describe unique identifying marks or details only the owner would know...";
+          const submitBtnText = isLost ? "Send report to owner" : "Submit claim";
+
+          sidebarHtml += `
+            <form class="form-card side-card" id="claim-form">
+              <span class="eyebrow">${eyebrow}</span>
+              <h2>${title}</h2>
+              <p class="muted small">${desc}</p>
+              <label>
+                Your message
+                <textarea rows="4" id="claim-message" placeholder="${placeholder}" required></textarea>
+              </label>
+              <button class="btn btn-primary btn-full" id="claim-submit-btn" type="submit">${submitBtnText}</button>
+            </form>
+          `;
+        } else {
+          sidebarHtml += `
+            <div class="form-card side-card">
+              <h2>Item ${escapeHtml(item.status)}</h2>
+              <p class="muted small">This item has already been marked as ${escapeHtml(item.status)}.</p>
+            </div>
+          `;
+        }
       }
 
       sidebarHtml += `
@@ -177,8 +293,8 @@ document.addEventListener("DOMContentLoaded", () => {
         if (claimForm) {
           claimForm.addEventListener("submit", async (e) => {
             e.preventDefault();
-            sidebarError?.classList.add("hidden");
-            sidebarSuccess?.classList.add("hidden");
+            if (sidebarError) sidebarError.classList.add("hidden");
+            if (sidebarSuccess) sidebarSuccess.classList.add("hidden");
 
             const msgInput = document.getElementById("claim-message");
             const btn = document.getElementById("claim-submit-btn");
@@ -186,17 +302,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
             try {
               await api.post("/claims", { itemId: id, message: msgInput.value.trim() });
-              if (sidebarSuccess) {
-                sidebarSuccess.textContent = "Your claim request has been submitted.";
-                sidebarSuccess.classList.remove("hidden");
-              }
-              msgInput.value = "";
+              await loadItem();
             } catch (err) {
               if (sidebarError) {
-                sidebarError.textContent = err.message || "Could not submit claim.";
+                sidebarError.textContent = err.message || "Could not submit report.";
                 sidebarError.classList.remove("hidden");
               }
-            } finally {
               if (btn) btn.disabled = false;
             }
           });
@@ -208,6 +319,26 @@ document.addEventListener("DOMContentLoaded", () => {
         sidebarContainer.querySelectorAll(".reject-claim-btn").forEach(btn => {
           btn.addEventListener("click", () => handleClaimStatus(btn.dataset.id, "rejected"));
         });
+
+        const deleteResolvedBtn = document.getElementById("delete-resolved-btn");
+        if (deleteResolvedBtn) {
+          deleteResolvedBtn.addEventListener("click", async () => {
+            if (!confirm("Are you sure you want to delete this missing item request from the campus board?")) {
+              return;
+            }
+            try {
+              deleteResolvedBtn.disabled = true;
+              deleteResolvedBtn.textContent = "Deleting...";
+              await api.delete(`/items/${id}`);
+              alert("Missing item post deleted successfully.");
+              window.location.href = "dashboard.html";
+            } catch (err) {
+              alert(err.message || "Could not delete item.");
+              deleteResolvedBtn.disabled = false;
+              deleteResolvedBtn.textContent = "Delete missing item request";
+            }
+          });
+        }
       }
 
     } catch (err) {
@@ -225,7 +356,7 @@ document.addEventListener("DOMContentLoaded", () => {
       await api.patch(`/claims/${claimId}`, { status });
       await loadItem();
     } catch (err) {
-      alert(err.message || "Could not update claim status.");
+      alert(err.message || "Could not update report status.");
     }
   };
 

@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import Item from "../models/item.model.js";
+import Claim from "../models/claim.model.js";
 
 export const createItem = async (req, res) => {
   try {
@@ -131,6 +132,7 @@ export const deleteItem = async (req, res) => {
       return res.status(403).json({ message: "You cannot delete this item" });
     }
 
+    await Claim.deleteMany({ item: item._id });
     await item.deleteOne();
     return res.status(200).json({ message: "Item deleted successfully" });
   } catch (error) {

@@ -13,12 +13,12 @@ export const createClaim = async (req, res) => {
     const item = await Item.findById(itemId);
     if (!item) return res.status(404).json({ message: "Item not found" });
 
-    if (item.itemType !== "found" || item.status !== "open") {
-      return res.status(400).json({ message: "This item cannot be claimed" });
+    if (item.status !== "open") {
+      return res.status(400).json({ message: "This item is no longer open for responses" });
     }
 
     if (item.postedBy.toString() === req.user._id.toString()) {
-      return res.status(403).json({ message: "You cannot claim your own item" });
+      return res.status(403).json({ message: "You cannot submit a report on your own item" });
     }
 
     const claim = await Claim.create({
@@ -27,12 +27,14 @@ export const createClaim = async (req, res) => {
       message
     });
 
-    return res.status(201).json({ message: "Claim request submitted", claim });
+    const populatedClaim = await Claim.findById(claim._id).populate("claimedBy", "name email");
+
+    return res.status(201).json({ message: "Report submitted successfully", claim: populatedClaim });
   } catch (error) {
     if (error.code === 11000) {
-      return res.status(409).json({ message: "You have already claimed this item" });
+      return res.status(409).json({ message: "You have already submitted a response for this item" });
     }
-    return res.status(400).json({ message: "Could not submit claim", error: error.message });
+    return res.status(400).json({ message: "Could not submit report", error: error.message });
   }
 };
 
@@ -42,20 +44,37 @@ export const getItemClaims = async (req, res) => {
       return res.status(400).json({ message: "Invalid item ID" });
     }
 
-    const item = await Item.findById(req.params.itemId);
+    const item = await Item.findById(req.params.itemId).populate("postedBy", "name email");
     if (!item) return res.status(404).json({ message: "Item not found" });
 
-    const isOwner = item.postedBy.toString() === req.user._id.toString();
-    if (!isOwner && req.user.role !== "admin") {
-      return res.status(403).json({ message: "Not authorized to view these claims" });
+    const postedById = item.postedBy?._id || item.postedBy;
+    const isOwner = postedById.toString() === req.user._id.toString();
+    const isAdmin = req.user.role === "admin";
+
+    if (isOwner || isAdmin) {
+      const claims = await Claim.find({ item: item._id })
+        .populate("claimedBy", "name email")
+        .sort({ createdAt: -1 });
+
+      return res.status(200).json({ count: claims.length, claims, isOwner: true });
     }
 
-    const claims = await Claim.find({ item: item._id })
+    // Respondent / Visitor view
+    const claims = await Claim.find({ item: item._id, claimedBy: req.user._id })
       .populate("claimedBy", "name email")
-      .populate("item", "title location")
       .sort({ createdAt: -1 });
 
-    return res.status(200).json({ count: claims.length, claims });
+    const hasApproved = claims.some(c => c.status === "approved");
+
+    return res.status(200).json({
+      count: claims.length,
+      claims,
+      isOwner: false,
+      ownerContact: hasApproved && item.postedBy ? {
+        name: item.postedBy.name,
+        email: item.postedBy.email
+      } : null
+    });
   } catch (error) {
     return res.status(500).json({ message: "Could not fetch claims" });
   }
@@ -81,8 +100,8 @@ export const updateClaimStatus = async (req, res) => {
       return res.status(403).json({ message: "Not authorized to update this claim" });
     }
 
-    if (claim.status !== "pending" || item.status !== "open") {
-      return res.status(409).json({ message: "This claim or item has already been processed" });
+    if (claim.status !== "pending") {
+      return res.status(409).json({ message: "This report has already been processed" });
     }
 
     claim.status = status;
@@ -98,7 +117,13 @@ export const updateClaimStatus = async (req, res) => {
       );
     }
 
-    return res.status(200).json({ message: `Claim ${status}`, claim });
+    const populatedClaim = await Claim.findById(claim._id).populate("claimedBy", "name email");
+
+    return res.status(200).json({
+      message: `Report ${status} successfully`,
+      claim: populatedClaim,
+      itemStatus: item.status
+    });
   } catch (error) {
     return res.status(500).json({ message: "Could not update claim status" });
   }
