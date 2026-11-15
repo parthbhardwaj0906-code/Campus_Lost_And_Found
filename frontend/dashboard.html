@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#f7f8fc" />
+  <meta name="description" content="Browse lost and found items on campus." />
+  <title>Browse Items - Campus Lost & Found</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <!-- Header / Navigation -->
+  <header class="site-header">
+    <nav class="navbar container">
+      <a class="brand" href="index.html">
+        <span class="brand-mark">⌕</span>
+        <span>Campus<span class="brand-accent">Find</span></span>
+      </a>
+      <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a class="active" href="dashboard.html">Browse items</a>
+        <a href="my-posts.html">My posts</a>
+      </div>
+      <div class="nav-actions">
+        <span class="nav-user">Hi, Alex</span>
+        <a class="btn btn-outline btn-small" href="login.html">Logout</a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <div class="page-section container">
+      <div class="page-title-row">
+        <div>
+          <span class="eyebrow">CAMPUS COMMUNITY BOARD</span>
+          <h1>Find what you're<br class="mobile-break" /> looking for.</h1>
+          <p>Browse lost and found posts shared by students.</p>
+        </div>
+        <a class="btn btn-primary" href="create-item.html">＋ Report an item</a>
+      </div>
+
+      <form class="filter-bar" action="dashboard.html" method="get">
+        <div class="search-field">
+          <span>⌕</span>
+          <input name="search" placeholder="Search by item, description or location..." />
+        </div>
+        <select name="type">
+          <option value="">All posts</option>
+          <option value="lost">Lost items</option>
+          <option value="found">Found items</option>
+        </select>
+        <select name="category">
+          <option value="">All categories</option>
+          <option value="Electronics">Electronics</option>
+          <option value="Accessories">Accessories</option>
+          <option value="Books">Books</option>
+          <option value="Clothing">Clothing</option>
+          <option value="ID Cards">ID Cards</option>
+          <option value="Keys">Keys</option>
+          <option value="Other">Other</option>
+        </select>
+        <button class="btn btn-primary" type="submit">Search</button>
+        <a class="btn btn-ghost" href="dashboard.html">Clear</a>
+      </form>
+
+      <div class="results-heading">
+        <h2>Community posts</h2>
+        <span class="muted small">6 results on this page</span>
+      </div>
+
+      <div class="items-grid">
+        <!-- Item 1 -->
+        <article class="item-card">
+          <div class="item-visual">
+            <div class="item-placeholder"><span>✓</span><small>No image provided</small></div>
+            <span class="pill pill-found">Found item</span>
+          </div>
+          <div class="item-card-body">
+            <div class="item-meta">Electronics <span>·</span> open</div>
+            <h3>Sony WH-1000XM4 Headphones</h3>
+            <p class="item-description">Black over-ear headphones found on the 3rd floor study quiet area near desk 14.</p>
+            <div class="item-location">⌖ Central Library, 3rd Floor</div>
+            <div class="item-card-bottom">
+              <span class="muted small">Today</span>
+              <a class="text-link" href="item-details.html">View details <span>→</span></a>
+            </div>
+          </div>
+        </article>
+
+        <!-- Item 2 -->
+        <article class="item-card">
+          <div class="item-visual">
+            <div class="item-placeholder"><span>⌕</span><small>No image provided</small></div>
+            <span class="pill pill-lost">Lost item</span>
+          </div>
+          <div class="item-card-body">
+            <div class="item-meta">Accessories <span>·</span> open</div>
+            <h3>Hydro Flask Water Bottle</h3>
+            <p class="item-description">Pacific blue 32oz bottle with computer science stickers on the side.</p>
+            <div class="item-location">⌖ Engineering Block B</div>
+            <div class="item-card-bottom">
+              <span class="muted small">Yesterday</span>
+              <a class="text-link" href="item-details.html">View details <span>→</span></a>
+            </div>
+          </div>
+        </article>
+
+        <!-- Item 3 -->
+        <article class="item-card">
+          <div class="item-visual">
+            <div class="item-placeholder"><span>✓</span><small>No image provided</small></div>
+            <span class="pill pill-found">Found item</span>
+          </div>
+          <div class="item-card-body">
+            <div class="item-meta">ID Cards <span>·</span> open</div>
+            <h3>Student Campus SmartCard</h3>
+            <p class="item-description">Found near the cafeteria checkout counter. Name initials A.K.</p>
+            <div class="item-location">⌖ Campus Dining Hall</div>
+            <div class="item-card-bottom">
+              <span class="muted small">2 days ago</span>
+              <a class="text-link" href="item-details.html">View details <span>→</span></a>
+            </div>
+          </div>
+        </article>
+
+        <!-- Item 4 -->
+        <article class="item-card">
+          <div class="item-visual">
+            <div class="item-placeholder"><span>⌕</span><small>No image provided</small></div>
+            <span class="pill pill-lost">Lost item</span>
+          </div>
+          <div class="item-card-body">
+            <div class="item-meta">Electronics <span>·</span> open</div>
+            <h3>Apple iPad Air (5th Gen) with Pencil</h3>
+            <p class="item-description">Space Grey iPad in a dark magnetic folio case. Misplaced during lecture.</p>
+            <div class="item-location">⌖ Main Auditorium Room 102</div>
+            <div class="item-card-bottom">
+              <span class="muted small">3 days ago</span>
+              <a class="text-link" href="item-details.html">View details <span>→</span></a>
+            </div>
+          </div>
+        </article>
+
+        <!-- Item 5 -->
+        <article class="item-card">
+          <div class="item-visual">
+            <div class="item-placeholder"><span>✓</span><small>No image provided</small></div>
+            <span class="pill pill-found">Found item</span>
+          </div>
+          <div class="item-card-body">
+            <div class="item-meta">Keys <span>·</span> open</div>
+            <h3>Keychain with 3 Keys & Car Fob</h3>
+            <p class="item-description">Set of silver keys on a red campus lanyard found on the bench outside gym.</p>
+            <div class="item-location">⌖ Sports Complex Bench</div>
+            <div class="item-card-bottom">
+              <span class="muted small">4 days ago</span>
+              <a class="text-link" href="item-details.html">View details <span>→</span></a>
+            </div>
+          </div>
+        </article>
+
+        <!-- Item 6 -->
+        <article class="item-card">
+          <div class="item-visual">
+            <div class="item-placeholder"><span>⌕</span><small>No image provided</small></div>
+            <span class="pill pill-lost">Lost item</span>
+          </div>
+          <div class="item-card-body">
+            <div class="item-meta">Books <span>·</span> open</div>
+            <h3>Data Structures & Algorithms Textbook</h3>
+            <p class="item-description">Hardcover 4th edition with notes highlighted in green on chapters 3 and 4.</p>
+            <div class="item-location">⌖ Computer Science Lab 2</div>
+            <div class="item-card-bottom">
+              <span class="muted small">5 days ago</span>
+              <a class="text-link" href="item-details.html">View details <span>→</span></a>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-inner">
+      <a class="brand" href="index.html">
+        <span class="brand-mark">⌕</span> Campus<span class="brand-accent">Find</span>
+      </a>
+      <span>Helping campus belongings find their way home.</span>
+      <span>© 2026 CampusFind</span>
+    </div>
+  </footer>
+</body>
+</html>

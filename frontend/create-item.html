@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#f7f8fc" />
+  <meta name="description" content="Report a lost or found item." />
+  <title>Post Item - Campus Lost & Found</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <!-- Header / Navigation -->
+  <header class="site-header">
+    <nav class="navbar container">
+      <a class="brand" href="index.html">
+        <span class="brand-mark">⌕</span>
+        <span>Campus<span class="brand-accent">Find</span></span>
+      </a>
+      <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="dashboard.html">Browse items</a>
+        <a href="my-posts.html">My posts</a>
+      </div>
+      <div class="nav-actions">
+        <span class="nav-user">Hi, Alex</span>
+        <a class="btn btn-outline btn-small" href="login.html">Logout</a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <div class="form-page container">
+      <div class="form-page-intro">
+        <span class="eyebrow">ADD TO THE COMMUNITY BOARD</span>
+        <h1>Share the details.</h1>
+        <p>Add item details and a photo to help its owner find it.</p>
+      </div>
+
+      <form class="form-card wide-form" action="my-posts.html" method="get">
+        <!-- Pure CSS Type Toggle via Radio Inputs -->
+        <div class="type-toggle">
+          <label class="type-option">
+            <input type="radio" name="itemType" value="lost" checked />
+            <b>⌕</b>
+            <span>
+              <strong>I lost something</strong>
+              <small>Help me find my belonging</small>
+            </span>
+          </label>
+
+          <label class="type-option">
+            <input type="radio" name="itemType" value="found" />
+            <b>✓</b>
+            <span>
+              <strong>I found something</strong>
+              <small>Help it reach its owner</small>
+            </span>
+          </label>
+        </div>
+
+        <div class="form-grid">
+          <label class="span-two">
+            Item name
+            <input name="title" placeholder="e.g. Black water bottle" required maxlength="120" />
+          </label>
+
+          <label>
+            Category
+            <select name="category">
+              <option value="Electronics">Electronics</option>
+              <option value="Accessories">Accessories</option>
+              <option value="Books">Books</option>
+              <option value="Clothing">Clothing</option>
+              <option value="ID Cards">ID Cards</option>
+              <option value="Keys">Keys</option>
+              <option value="Other" selected>Other</option>
+            </select>
+          </label>
+
+          <label>
+            Date lost or found
+            <input type="date" name="date" value="2026-11-15" required />
+          </label>
+
+          <label class="span-two">
+            Location
+            <input name="location" placeholder="e.g. Central library" required maxlength="120" />
+          </label>
+
+          <label class="span-two">
+            Description
+            <textarea name="description" placeholder="Add colour, brand and identifying details..." rows="5" required maxlength="2000"></textarea>
+          </label>
+
+          <!-- Image upload section -->
+          <div class="span-two image-upload-section">
+            <strong>Item photograph (optional)</strong>
+            <p class="muted small">Upload from gallery or capture a new photo. Maximum size: 5 MB.</p>
+
+            <input id="gallery-input" type="file" accept="image/*" class="file-input-hidden" />
+            <input id="camera-input" type="file" accept="image/*" capture="environment" class="file-input-hidden" />
+
+            <div class="image-upload-actions">
+              <label for="gallery-input" class="btn btn-outline">
+                Choose from Gallery
+              </label>
+              <label for="camera-input" class="btn btn-outline">
+                Capture with Camera
+              </label>
+            </div>
+
+            <div class="image-preview">
+              <div class="image-preview-box">
+                <span>📷</span>
+                <span>Photo upload preview area (up to 5 MB)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <a class="btn btn-ghost" href="dashboard.html">
+            Cancel
+          </a>
+          <button class="btn btn-primary" type="submit">
+            Publish post →
+          </button>
+        </div>
+
+        <p class="form-hint">
+          Avoid uploading photos containing private information.
+        </p>
+      </form>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-inner">
+      <a class="brand" href="index.html">
+        <span class="brand-mark">⌕</span> Campus<span class="brand-accent">Find</span>
+      </a>
+      <span>Helping campus belongings find their way home.</span>
+      <span>© 2026 CampusFind</span>
+    </div>
+  </footer>
+</body>
+</html>

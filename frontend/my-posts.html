@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#f7f8fc" />
+  <meta name="description" content="View your lost and found posts." />
+  <title>My Posts - Campus Lost & Found</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <!-- Header / Navigation -->
+  <header class="site-header">
+    <nav class="navbar container">
+      <a class="brand" href="index.html">
+        <span class="brand-mark">⌕</span>
+        <span>Campus<span class="brand-accent">Find</span></span>
+      </a>
+      <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="dashboard.html">Browse items</a>
+        <a class="active" href="my-posts.html">My posts</a>
+      </div>
+      <div class="nav-actions">
+        <span class="nav-user">Hi, Alex</span>
+        <a class="btn btn-outline btn-small" href="login.html">Logout</a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <div class="container page-section">
+      <div class="page-title-row">
+        <div>
+          <span class="eyebrow">YOUR ACTIVITY</span>
+          <h1>My posts.</h1>
+          <p>Keep track of the items you've shared with campus.</p>
+        </div>
+        <a class="btn btn-primary" href="create-item.html">＋ New post</a>
+      </div>
+
+      <div class="alert alert-success">
+        Your item has been posted successfully and is now visible to the campus.
+      </div>
+
+      <div class="items-grid">
+        <!-- User Post 1 -->
+        <div class="managed-card">
+          <article class="item-card">
+            <div class="item-visual">
+              <div class="item-placeholder"><span>⌕</span><small>No image provided</small></div>
+              <span class="pill pill-lost">Lost item</span>
+            </div>
+            <div class="item-card-body">
+              <div class="item-meta">Accessories <span>·</span> open</div>
+              <h3>Hydro Flask Water Bottle</h3>
+              <p class="item-description">Pacific blue 32oz bottle with computer science stickers on the side.</p>
+              <div class="item-location">⌖ Engineering Block B</div>
+              <div class="item-card-bottom">
+                <span class="muted small">Yesterday</span>
+                <a class="text-link" href="item-details.html">View details <span>→</span></a>
+              </div>
+            </div>
+          </article>
+          <a class="delete-link" href="my-posts.html">Delete post</a>
+        </div>
+
+        <!-- User Post 2 -->
+        <div class="managed-card">
+          <article class="item-card">
+            <div class="item-visual">
+              <div class="item-placeholder"><span>✓</span><small>No image provided</small></div>
+              <span class="pill pill-found">Found item</span>
+            </div>
+            <div class="item-card-body">
+              <div class="item-meta">Electronics <span>·</span> open</div>
+              <h3>Sony WH-1000XM4 Headphones</h3>
+              <p class="item-description">Black over-ear headphones found on the 3rd floor study quiet area near desk 14.</p>
+              <div class="item-location">⌖ Central Library, 3rd Floor</div>
+              <div class="item-card-bottom">
+                <span class="muted small">Today</span>
+                <a class="text-link" href="item-details.html">View details <span>→</span></a>
+              </div>
+            </div>
+          </article>
+          <a class="delete-link" href="my-posts.html">Delete post</a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-inner">
+      <a class="brand" href="index.html">
+        <span class="brand-mark">⌕</span> Campus<span class="brand-accent">Find</span>
+      </a>
+      <span>Helping campus belongings find their way home.</span>
+      <span>© 2026 CampusFind</span>
+    </div>
+  </footer>
+</body>
+</html>

@@ -15,13 +15,19 @@ app.set("trust proxy", 1);
 
 const allowedOrigins = [
   "http://localhost:5173",
+  "http://127.0.0.1:5173",
+  "http://localhost:5500",
+  "http://127.0.0.1:5500",
+  "http://localhost:3000",
+  "http://127.0.0.1:3000",
+  "http://localhost:8080",
+  "http://127.0.0.1:8080",
   process.env.CLIENT_URL,
 ].filter(Boolean);
 
-// Matches your per-deployment Vercel URLs, e.g.
-// https://frontend-b033o133p-parth-projects620.vercel.app
-const vercelDeploymentPattern =
-  /^https:\/\/frontend-[a-z0-9]+-parth-projects620\.vercel\.app$/;
+// Matches any Vercel deployment URL (*.vercel.app)
+const isVercelOrigin = (origin) =>
+  /^https:\/\/[a-z0-9-]+\.vercel\.app$/.test(origin);
 
 app.use("/uploads", express.static(path.resolve("uploads")));
 app.use(helmet({ crossOriginResourcePolicy: { policy: "cross-origin" } }));
@@ -31,7 +37,7 @@ app.use(
       if (
         !origin ||
         allowedOrigins.includes(origin) ||
-        vercelDeploymentPattern.test(origin)
+        isVercelOrigin(origin)
       ) {
         return callback(null, true);
       }

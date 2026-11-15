@@ -4,13 +4,14 @@
   "scripts": {
     "install-all": "npm install && npm --prefix backend install && npm --prefix frontend install",
     "dev": "concurrently \"npm --prefix backend run dev\" \"npm --prefix frontend run dev\"",
-    "start": "npm --prefix backend start"
+    "start": "npm --prefix backend start",
+    "build": "npm --prefix frontend run build"
   },
   "devDependencies": {
     "concurrently": "^9.0.0"
   },
   "version": "1.0.0",
-  "description": "React + Vite frontend for the Campus Lost & Found.",
+  "description": "HTML and CSS frontend for the Campus Lost & Found.",
   "main": "index.js",
   "repository": {
     "type": "git",

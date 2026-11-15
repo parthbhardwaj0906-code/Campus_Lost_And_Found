@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#f7f8fc" />
+  <meta name="description" content="View item details on Campus Lost & Found" />
+  <title>Item Details - Campus Lost & Found</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <!-- Header / Navigation -->
+  <header class="site-header">
+    <nav class="navbar container">
+      <a class="brand" href="index.html">
+        <span class="brand-mark">⌕</span>
+        <span>Campus<span class="brand-accent">Find</span></span>
+      </a>
+      <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a class="active" href="dashboard.html">Browse items</a>
+        <a href="my-posts.html">My posts</a>
+      </div>
+      <div class="nav-actions">
+        <span class="nav-user">Hi, Alex</span>
+        <a class="btn btn-outline btn-small" href="login.html">Logout</a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <div class="container page-section detail-layout">
+      <!-- Main Content -->
+      <div class="detail-main">
+        <a class="back-link" href="dashboard.html">← Back to community board</a>
+        <div class="detail-image">
+          <div class="item-placeholder large">
+            <span>✓</span>
+            <small>No image provided</small>
+          </div>
+        </div>
+        <div class="detail-content">
+          <div class="detail-pills">
+            <span class="pill pill-found">Found item</span>
+            <span class="pill pill-neutral">open</span>
+          </div>
+          <span class="eyebrow">Electronics</span>
+          <h1>Sony WH-1000XM4 Headphones</h1>
+          <p class="detail-description">
+            Black over-ear noise-cancelling headphones found on the 3rd floor quiet study area near desk 14. Left in a dark grey protective case with an audio cable and airplane adapter inside.
+          </p>
+          <div class="detail-info">
+            <div>
+              <small>LAST SEEN / FOUND AT</small>
+              <strong>⌖ Central Library, 3rd Floor</strong>
+            </div>
+            <div>
+              <small>DATE</small>
+              <strong>November 15, 2026</strong>
+            </div>
+            <div>
+              <small>POSTED BY</small>
+              <strong>Campus member (Priya Patel)</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sidebar -->
+      <aside class="detail-sidebar">
+        <!-- Claim Form -->
+        <form class="form-card side-card" action="item-details.html" method="get">
+          <span class="eyebrow">THINK IT'S YOURS?</span>
+          <h2>Make a claim</h2>
+          <p class="muted small">Share details that help the person who found it verify that it belongs to you.</p>
+          <label>
+            Your message
+            <textarea rows="5" placeholder="Describe a detail only the owner would know, e.g. serial number, custom marks..." required></textarea>
+          </label>
+          <button class="btn btn-primary btn-full" type="submit">Submit claim</button>
+        </form>
+
+        <!-- Claim Requests (moderation view) -->
+        <div class="form-card side-card">
+          <h2>Claim requests</h2>
+          <div class="claim-card">
+            <strong>Rahul Sharma</strong>
+            <p>I think these are mine, they have a small sticker on the right headband cushion.</p>
+            <span class="pill pill-neutral">pending</span>
+            <div class="claim-actions">
+              <button class="btn btn-primary btn-small" type="button">Approve</button>
+              <button class="btn btn-outline btn-small" type="button">Reject</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Safety Note -->
+        <div class="safety-note">
+          <strong>↗ Meet safely</strong>
+          <p>Arrange handover in a public campus location (such as campus security office or library front desk). Verify ownership before returning an item.</p>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-inner">
+      <a class="brand" href="index.html">
+        <span class="brand-mark">⌕</span> Campus<span class="brand-accent">Find</span>
+      </a>
+      <span>Helping campus belongings find their way home.</span>
+      <span>© 2026 CampusFind</span>
+    </div>
+  </footer>
+</body>
+</html>

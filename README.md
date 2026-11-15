@@ -1,6 +1,6 @@
 # Campus Lost & Found Frontend
 
-React + Vite frontend for the Campus Lost & Found.
+Pure HTML and CSS frontend for Campus Lost & Found.
 
 ## Requirements
 - Node.js (LTS recommended)
