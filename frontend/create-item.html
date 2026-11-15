@@ -103,9 +103,9 @@
               <label for="gallery-input" class="btn btn-outline">
                 Choose from Gallery
               </label>
-              <label for="camera-input" class="btn btn-outline">
+              <button id="camera-btn" type="button" class="btn btn-outline">
                 Capture with Camera
-              </label>
+              </button>
             </div>
 
             <div class="image-preview">
@@ -132,6 +132,23 @@
       </form>
     </div>
   </main>
+
+  <!-- Live Camera Modal -->
+  <div id="camera-modal" class="camera-modal hidden">
+    <div class="camera-modal-content">
+      <div class="camera-modal-header">
+        <h3>Camera Viewfinder</h3>
+        <button id="close-camera-btn" type="button" class="btn btn-ghost btn-small">✕ Close</button>
+      </div>
+      <div class="camera-viewport">
+        <video id="camera-video" autoplay playsinline muted></video>
+      </div>
+      <div class="camera-modal-actions">
+        <button id="switch-camera-btn" type="button" class="btn btn-outline btn-small hidden">🔄 Switch Camera</button>
+        <button id="snap-photo-btn" type="button" class="btn btn-primary">📸 Snap Photo</button>
+      </div>
+    </div>
+  </div>
 
   <footer class="footer">
     <div class="container footer-inner">

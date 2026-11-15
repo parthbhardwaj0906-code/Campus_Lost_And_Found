@@ -135,6 +135,116 @@ document.addEventListener("DOMContentLoaded", () => {
     cameraInput.addEventListener("change", (e) => handleFile(e.target.files?.[0]));
   }
 
+  // Camera handling with live WebRTC viewfinder & native fallback
+  const cameraBtn = document.getElementById("camera-btn");
+  const cameraModal = document.getElementById("camera-modal");
+  const cameraVideo = document.getElementById("camera-video");
+  const closeCameraBtn = document.getElementById("close-camera-btn");
+  const snapPhotoBtn = document.getElementById("snap-photo-btn");
+  const switchCameraBtn = document.getElementById("switch-camera-btn");
+  let currentStream = null;
+  let useFacingMode = "environment";
+
+  const stopCameraStream = () => {
+    if (currentStream) {
+      currentStream.getTracks().forEach((track) => track.stop());
+      currentStream = null;
+    }
+    if (cameraVideo) cameraVideo.srcObject = null;
+    if (cameraModal) cameraModal.classList.add("hidden");
+  };
+
+  const startCameraStream = async () => {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      if (cameraInput) cameraInput.click();
+      return;
+    }
+
+    try {
+      if (currentStream) {
+        currentStream.getTracks().forEach((track) => track.stop());
+      }
+
+      let stream;
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: useFacingMode, width: { ideal: 1920 }, height: { ideal: 1080 } },
+          audio: false
+        });
+      } catch {
+        stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+      }
+
+      currentStream = stream;
+      cameraVideo.srcObject = stream;
+      cameraModal.classList.remove("hidden");
+
+      try {
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        const videoDevices = devices.filter((d) => d.kind === "videoinput");
+        if (videoDevices.length > 1 && switchCameraBtn) {
+          switchCameraBtn.classList.remove("hidden");
+        }
+      } catch {
+        // ignore
+      }
+    } catch (camErr) {
+      console.warn("Could not access live camera, falling back to file input", camErr);
+      if (cameraInput) cameraInput.click();
+    }
+  };
+
+  if (cameraBtn) {
+    cameraBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      startCameraStream();
+    });
+  }
+
+  if (closeCameraBtn) {
+    closeCameraBtn.addEventListener("click", stopCameraStream);
+  }
+
+  if (switchCameraBtn) {
+    switchCameraBtn.addEventListener("click", () => {
+      useFacingMode = useFacingMode === "environment" ? "user" : "environment";
+      startCameraStream();
+    });
+  }
+
+  if (snapPhotoBtn) {
+    snapPhotoBtn.addEventListener("click", () => {
+      if (!cameraVideo || !currentStream) return;
+
+      const canvas = document.createElement("canvas");
+      canvas.width = cameraVideo.videoWidth || 1280;
+      canvas.height = cameraVideo.videoHeight || 720;
+      const ctx = canvas.getContext("2d");
+      ctx.drawImage(cameraVideo, 0, 0, canvas.width, canvas.height);
+
+      canvas.toBlob(
+        (blob) => {
+          if (blob) {
+            const capturedFile = new File([blob], `camera_${Date.now()}.jpg`, {
+              type: "image/jpeg",
+              lastModified: Date.now()
+            });
+            handleFile(capturedFile);
+          }
+          stopCameraStream();
+        },
+        "image/jpeg",
+        0.9
+      );
+    });
+  }
+
+  window.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && currentStream) {
+      stopCameraStream();
+    }
+  });
+
   if (form) {
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
