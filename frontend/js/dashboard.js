@@ -3,10 +3,9 @@ import auth from "./auth.js";
 import renderNav from "./navbar.js";
 import renderItemCard from "./item-card.js";
 
-document.addEventListener("DOMContentLoaded", async () => {
+document.addEventListener("DOMContentLoaded", () => {
   renderNav("dashboard");
-  await auth.verifyAuth();
-  renderNav("dashboard");
+  auth.verifyAuth().then(() => renderNav("dashboard")).catch(() => {});
 
   const searchInput = document.getElementById("search-input");
   const typeSelect = document.getElementById("type-select");

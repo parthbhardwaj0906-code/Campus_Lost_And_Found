@@ -2,12 +2,14 @@ import api, { getImageUrl, escapeHtml } from "./api.js";
 import auth from "./auth.js";
 import renderNav from "./navbar.js";
 
-document.addEventListener("DOMContentLoaded", async () => {
+document.addEventListener("DOMContentLoaded", () => {
   renderNav("dashboard");
-  await auth.verifyAuth();
-  renderNav("dashboard");
+  auth.verifyAuth().then(() => {
+    renderNav("dashboard");
+    loadItem();
+  }).catch(() => {});
 
-  const user = auth.getUser();
+  let user = auth.getUser();
   const params = new URLSearchParams(window.location.search);
   const id = params.get("id");
 
@@ -39,6 +41,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         return;
       }
 
+      user = auth.getUser();
       const postedById = item.postedBy?._id || item.postedBy?.id || item.postedBy;
       const currentUserId = user?._id || user?.id;
       const isOwner = Boolean(user && postedById && String(postedById) === String(currentUserId));
