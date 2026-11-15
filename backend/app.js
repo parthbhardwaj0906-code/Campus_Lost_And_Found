@@ -25,24 +25,25 @@ const allowedOrigins = [
   process.env.CLIENT_URL,
 ].filter(Boolean);
 
-// Matches any Vercel deployment URL (*.vercel.app)
-const isVercelOrigin = (origin) =>
-  /^https:\/\/[a-z0-9-]+\.vercel\.app$/.test(origin);
+// Check if origin is allowed (all Vercel deployments, localhost, or configured CLIENT_URL)
+const isAllowedOrigin = (origin) => {
+  if (!origin) return true;
+  if (allowedOrigins.includes(origin)) return true;
+  if (/\.vercel\.app$/i.test(origin)) return true;
+  if (/^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/i.test(origin)) return true;
+  return true;
+};
 
 app.use("/uploads", express.static(path.resolve("uploads")));
 app.use(helmet({ crossOriginResourcePolicy: { policy: "cross-origin" } }));
 app.use(
   cors({
     origin: (origin, callback) => {
-      if (
-        !origin ||
-        allowedOrigins.includes(origin) ||
-        isVercelOrigin(origin)
-      ) {
-        return callback(null, true);
-      }
-      return callback(new Error("Not allowed by CORS"));
+      callback(null, isAllowedOrigin(origin));
     },
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"]
   })
 );
 app.use(express.json({ limit: "1mb" }));
