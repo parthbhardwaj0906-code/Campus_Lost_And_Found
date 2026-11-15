@@ -60,7 +60,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
       if (mainContainer) {
         mainContainer.innerHTML = `
-          <a class="back-link" href="dashboard.html">← Back to community board</a>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px;">
+            <a class="back-link" href="dashboard.html" style="margin-bottom: 0;">← Back to community board</a>
+            ${canManage ? `
+              <button class="delete-link delete-post-action-btn" type="button" style="color: #b3321f;">
+                🗑 Delete post
+              </button>
+            ` : ''}
+          </div>
           <div class="detail-image">${visualHtml}</div>
           <div class="detail-content">
             <div class="detail-pills">
@@ -109,7 +116,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const returnUrl = `item-details.html?id=${encodeURIComponent(id)}`;
 
       if (canManage) {
-        // OWNER / ADMIN VIEW: See responses and manage them
+        // OWNER / ADMIN VIEW: Manage post and review responses
         const heading = isLost ? "Found item reports" : "Claim requests";
         const subtitle = isLost
           ? "Responses from people who found or saw your missing item."
@@ -136,9 +143,21 @@ document.addEventListener("DOMContentLoaded", () => {
                 <h4>Item resolved!</h4>
                 <p>Now that your missing item has been located and confirmed, would you like to delete this missing item request from the campus board?</p>
                 <div class="resolve-actions">
-                  <button class="btn btn-danger btn-small" id="delete-resolved-btn" type="button">Delete missing item request</button>
+                  <button class="btn btn-danger btn-small delete-post-action-btn" type="button">Delete missing item request</button>
                 </div>
               </div>
+            </div>
+          `;
+        } else {
+          // No response approved yet - option to delete if found themselves!
+          sidebarHtml += `
+            <div class="form-card side-card">
+              <span class="eyebrow">POST MANAGEMENT</span>
+              <h3>Found it yourself?</h3>
+              <p class="muted small">${isLost ? "If you found your missing item yourself or no longer need community help, you can delete this request from the campus board anytime." : "If this item has already been returned or you want to cancel, you can delete this post anytime."}</p>
+              <button class="btn btn-outline btn-full btn-danger-outline delete-post-action-btn" type="button" style="margin-top: 10px;">
+                🗑 Delete this post
+              </button>
             </div>
           `;
         }
@@ -320,25 +339,35 @@ document.addEventListener("DOMContentLoaded", () => {
           btn.addEventListener("click", () => handleClaimStatus(btn.dataset.id, "rejected"));
         });
 
-        const deleteResolvedBtn = document.getElementById("delete-resolved-btn");
-        if (deleteResolvedBtn) {
-          deleteResolvedBtn.addEventListener("click", async () => {
-            if (!confirm("Are you sure you want to delete this missing item request from the campus board?")) {
+        // Delete post buttons (both from sidebar and top header)
+        const deleteButtons = document.querySelectorAll(".delete-post-action-btn");
+        deleteButtons.forEach(btn => {
+          btn.addEventListener("click", async () => {
+            const confirmMsg = isLost
+              ? "Found it yourself or want to delete this missing item request? It will be permanently removed from the campus board."
+              : "Are you sure you want to delete this post? It will be permanently removed from the campus board.";
+
+            if (!confirm(confirmMsg)) {
               return;
             }
+
             try {
-              deleteResolvedBtn.disabled = true;
-              deleteResolvedBtn.textContent = "Deleting...";
+              deleteButtons.forEach(b => {
+                b.disabled = true;
+                b.textContent = "Deleting...";
+              });
               await api.delete(`/items/${id}`);
-              alert("Missing item post deleted successfully.");
+              alert("Post deleted successfully.");
               window.location.href = "dashboard.html";
             } catch (err) {
-              alert(err.message || "Could not delete item.");
-              deleteResolvedBtn.disabled = false;
-              deleteResolvedBtn.textContent = "Delete missing item request";
+              alert(err.message || "Could not delete post.");
+              deleteButtons.forEach(b => {
+                b.disabled = false;
+                b.textContent = "🗑 Delete this post";
+              });
             }
           });
-        }
+        });
       }
 
     } catch (err) {

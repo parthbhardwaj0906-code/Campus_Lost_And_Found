@@ -1281,6 +1281,18 @@ input:focus, textarea:focus, select:focus {
   background: #b0321f;
 }
 
+.btn-danger-outline {
+  border-color: #f5d4cb;
+  color: #b3321f;
+  background: #fffafa;
+}
+
+.btn-danger-outline:hover {
+  background: #fff0ed;
+  border-color: #e28e7e;
+  color: #a42c1b;
+}
+
 .mobile-break {
   display: none;
 }
